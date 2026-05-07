@@ -7,3 +7,5 @@ execute if score $GUIS_OWNED gm.Values matches 1.. run data modify storage guima
 tellraw @s {"text":"-------------------------------","color":"#FFDF8D"}
 execute if score $GUIS_OWNED gm.Values matches 1.. run function guimaker:maker/gui/get_list_of_guis/list/2
 tellraw @s {"text":"-------------------------------","color":"#FFDF8D"}
+
+tag @s add .this
