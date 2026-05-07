@@ -6,6 +6,7 @@ data modify storage guimaker:temp ops.new_page.layout set from storage guimaker:
 data modify storage guimaker:temp ops.new_page.layout[].tag.gm.Button set value 1b
 data modify storage guimaker:temp ops.new_page.layout[].tag.BUTTON_INFO.function_file set value "guimaker:extra/empty"
 data modify storage guimaker:temp ops.new_page.layout[].tag.BUTTON_INFO.switch_page set value 0
+data modify storage guimaker:temp ops.new_page.layout[].tag.BUTTON_INFO.command set value ""
 data modify storage guimaker:temp ops.new_page.layout[].tag.BUTTON_INFO.item_modifier set value "empty"
 function guimaker:util/ops/add_page
 data remove storage guimaker:temp add
