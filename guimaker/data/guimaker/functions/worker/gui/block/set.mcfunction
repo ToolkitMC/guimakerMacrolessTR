@@ -1,5 +1,5 @@
 #> GUI Block Set — @s = gm.gui.container.place marker
-setblock ~ ~ ~ minecraft:barrel{} replace
+setblock ~ ~ ~ minecraft:barrel{}
 execute store result score $target_gui gm.Values run data get entity @s data.GUI_ID
 execute store result score $target_page gm.Values run data get entity @s data.page_number
 function guimaker:util/search/gui
@@ -17,3 +17,6 @@ data modify entity @e[type=marker,tag=gm.itemcheck,tag=gm.gui.block,sort=nearest
 data modify entity @e[type=marker,tag=gm.itemcheck,tag=gm.gui.block,sort=nearest,limit=1] data.PAGE.INFO.page_number set from entity @s data.page_number
 execute as @e[type=marker,tag=gm.itemcheck,tag=gm.gui.block,sort=nearest,limit=1] at @s run function guimaker:worker/gui/block/init_marker
 kill @s
+
+execute as @a[tag=.this] at @s run tp @s ~ ~1 ~
+execute as @a[tag=.this] at @s run tag @s remove .this
