@@ -1,0 +1,14 @@
+{
+  "function": "minecraft:copy_nbt",
+  "source": {
+    "type": "minecraft:storage",
+    "source": "guimaker:temp"
+  },
+  "ops": [
+    {
+      "source": "ops.set_name",
+      "target": "display.Name",
+      "op": "replace"
+    }
+  ]
+}
