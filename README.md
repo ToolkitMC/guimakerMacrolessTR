@@ -1,6 +1,6 @@
 # GUI Maker — Kullanım Kılavuzu
 
-**Sürüm:** 1.20.1 · **Pack Format:** 15 · **Namespace:** `click_api`  
+**Sürüm:** 1.20.1 · **Pack Format:** 15 · **Namespace:** `guimaker`  
 **Makro kullanmaz.** Command block tunnel + hardcoded NBT dispatch ile çalışır.
 
 ---
@@ -56,7 +56,9 @@ barden:gui.all {
                 gm: { Button: 1b },
                 BUTTON_INFO: {
                   function_file: "mynamespace:my_function",
-                  item_modifier: "empty"
+                  item_modifier: "empty",
+                  command: "",
+                  switch_page: 0
                 }
               }
             },
@@ -74,18 +76,31 @@ barden:gui.all {
 Barrel yerleştirildiğinde yanına bir `marker` entity summon edilir. Bu marker:
 - Barrel'ın `Items` snapshot'ını (`PAGE.INIT`) tutar.
 - Her tick, slot 0–26'yı karşılaştırır: `INIT[{Slot:Nb}]` var ama blokta yoksa → tıklandı.
-- Tıklanan slot'un `BUTTON_INFO.function_file` değeri **command block tunnel** üzerinden çalıştırılır.
+- Tıklanan slot'un `BUTTON_INFO` alanları öncelik sırasıyla işlenir:
+  1. `switch_page > 0` → aynı GUI'nin hedef sayfasına geçiş yapılır, diğer alanlar çalışmaz.
+  2. `function_file` → **command block tunnel** üzerinden fonksiyon çağrısı.
+  3. `command` → **command block tunnel** üzerinden ham komut çalıştırılır (`function_file`'dan bağımsız, ikisi birden çalışabilir).
+
+### BUTTON_INFO alanları
+
+| Alan | Tip | Açıklama |
+|---|---|---|
+| `function_file` | string | `namespace:path` formatında fonksiyon adı. Tunnel üzerinden `function` olarak çalıştırılır. |
+| `item_modifier` | string | Item modifier adı. |
+| `command` | string | Ham MC komutu (ör. `"say merhaba"`). Tunnel üzerinden doğrudan çalıştırılır. |
+| `switch_page` | int | `> 0` ise o `page_number`'a geçiş yapar. `0` = pasif. |
 
 ### Command block tunnel
 
-Makro olmadığı için string bir fonksiyon adı doğrudan çalıştırılamaz. Bunun yerine:
+Makro olmadığı için string değerler doğrudan çalıştırılamaz. Bunun yerine:
 
-1. `guimaker:input { cmd: "mynamespace:my_func" }` storage'a yazılır.
+1. `guimaker:input { cmd: "..." }` storage'a yazılır.
 2. `0, -64, 0` koordinatına bir command block yerleştirilir.
 3. `Command` alanına storage'daki string kopyalanır, `auto:1b` yapılır.
 4. 2 tick sonra command block temizlenir.
 
-Bu yüzden `function_file` değeri **tam namespace:path formatında** olmalıdır.
+`function_file` → `namespace:path` formatında (command block `function` komutu gibi çalıştırır).  
+`command` → ham komut string'i (ör. `"give @p minecraft:diamond"`). Aynı tunnel'ı kullanır.
 
 ### Limitler
 
@@ -161,17 +176,29 @@ Tüm maker komutları `/trigger` ile tetiklenir. **Sadece Creative modda** etkin
 Butonu güncellemek için:
 
 ```
-# 1) Yeni function_file değerini storage'a yaz:
+# function_file
 /data modify storage guimaker:temp ops.function_file set value "mynamespace:my_function"
-
-# 2) Güncelle:
 /function guimaker:maker/gui/edit_page/btn_info/set_nbt
-```
 
-`item_modifier` için de aynı pattern:
-```
+# item_modifier
 /data modify storage guimaker:temp ops.item_modifier set value "my_modifier"
 /function guimaker:maker/gui/edit_page/btn_info/set_nbt
+
+# command (ham MC komutu)
+/data modify storage guimaker:temp ops.command set value "say merhaba"
+/function guimaker:maker/gui/edit_page/btn_info/set_nbt
+
+# switch_page (hedef page_number — 0 = pasif)
+/data modify storage guimaker:temp ops.switch_page set value 2
+/function guimaker:maker/gui/edit_page/btn_info/set_nbt
+```
+
+Alanları temizlemek için editör barrel açıkken butona tıklayın → chat'te **[command temizle]** ve **[switch_page temizle]** butonları çıkar. Ya da doğrudan:
+
+```
+# $target_slot show_XX tarafından set edilmiş olmalı
+/function guimaker:maker/gui/edit_page/btn_info/clear_command
+/function guimaker:maker/gui/edit_page/btn_info/clear_switch_page
 ```
 
 ---
@@ -225,16 +252,27 @@ function guimaker:worker/gui/block/place_0_0
 
 ### Buton callback
 
-Bir butona tıklandığında `BUTTON_INFO.function_file` değerindeki fonksiyon çalışır. Bu fonksiyonu kendi namespace'inizde tanımlayın:
+Bir butona tıklandığında `BUTTON_INFO` alanları işlenir. `function_file` ve `command` aynı tunnel'ı kullanır:
 
 ```mcfunction
 # data/mynamespace/functions/on_click.mcfunction
 tellraw @a {"text":"Butona basıldı!","color":"green"}
 ```
 
-Storage'a kaydetmek için:
 ```
 /data modify storage guimaker:temp ops.function_file set value "mynamespace:on_click"
+/function guimaker:maker/gui/edit_page/btn_info/set_nbt
+```
+
+Ham komut için:
+```
+/data modify storage guimaker:temp ops.command set value "give @p minecraft:diamond"
+/function guimaker:maker/gui/edit_page/btn_info/set_nbt
+```
+
+Sayfa geçişi için (`page_number` 2'ye geçiş):
+```
+/data modify storage guimaker:temp ops.switch_page set value 2
 /function guimaker:maker/gui/edit_page/btn_info/set_nbt
 ```
 
@@ -277,6 +315,7 @@ function guimaker:util/page_search/page
 | `$target_slot` | `gm.Values` | set_nbt için slot numarası (0–26) |
 | `$clicked` | `gm.Tests` | 1 = bu tick tıklama işlendi |
 | `$page_count` | `gm.Values` | Seçili GUI'nin sayfa sayısı |
+| `$switch_target` | `gm.Values` | Tıklanan slot'un switch_page değeri (0 = yok) |
 
 ---
 
