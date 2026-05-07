@@ -7,6 +7,10 @@ tellraw @s {"text":"-------------------------------","color":"#FFDF8D"}
 tellraw @s ["",{"text":"[GUI Maker] ","bold":true,"color":"#3FFEFE"},{"text":"Slot 16 Buton Ayarı","color":"white"}]
 tellraw @s ["",{"text":"function_file: ","color":"#94E664"},{"storage":"guimaker:temp","nbt":"btn_view.function_file","color":"yellow"}]
 tellraw @s ["",{"text":"item_modifier: ","color":"#75FF00"},{"storage":"guimaker:temp","nbt":"btn_view.item_modifier","color":"yellow"}]
+tellraw @s ["",{"text":"switch_page: ","color":"#FFB347"},{"storage":"guimaker:temp","nbt":"btn_view.switch_page","color":"#FFD700"}]
+tellraw @s ["",{"text":"[switch_page ayarla: ","color":"gray"},{"text":"/data modify storage guimaker:temp ops.switch_page set value <page_no>","color":"aqua","clickEvent":{"action":"suggest_command","value":"/data modify storage guimaker:temp ops.switch_page set value 2"}},{"text":"]","color":"gray"}]
+tellraw @s ["",{"text":"[switch_page temizle]","color":"#FF6666","clickEvent":{"action":"run_command","value":"/function guimaker:maker/gui/edit_page/btn_info/clear_switch_page"}}]
 tellraw @s ["",{"text":"[Sil]","color":"red","clickEvent":{"action":"suggest_command","value":"/function guimaker:maker/gui/delete_page/1"}},{"text":"  "},{"text":"[Sayfayı Sil]","color":"dark_red","clickEvent":{"action":"suggest_command","value":"/function guimaker:maker/gui/delete_gui/1"}}]
 tellraw @s {"text":"-------------------------------","color":"#FFDF8D"}
+scoreboard players set $target_slot gm.Values 16
 scoreboard players set $clicked gm.Tests 1
