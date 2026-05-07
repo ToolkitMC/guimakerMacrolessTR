@@ -23,9 +23,9 @@
 ```
 /datapack list
 ```
-Datapeck listede `[file/click_api_1201]` olarak görünüyorsa aktif. Görünmüyorsa:
+Datapeck listede `[file/guimaker]` olarak görünüyorsa aktif. Görünmüyorsa:
 ```
-/datapack enable "file/click_api_1201"
+/datapack enable "file/guimaker"
 ```
 Init fonksiyonu otomatik çalışır (scoreboards ve forceload kurulur).
 
@@ -80,7 +80,7 @@ Barrel yerleştirildiğinde yanına bir `marker` entity summon edilir. Bu marker
 
 Makro olmadığı için string bir fonksiyon adı doğrudan çalıştırılamaz. Bunun yerine:
 
-1. `click_api:input { cmd: "mynamespace:my_func" }` storage'a yazılır.
+1. `guimaker:input { cmd: "mynamespace:my_func" }` storage'a yazılır.
 2. `0, -64, 0` koordinatına bir command block yerleştirilir.
 3. `Command` alanına storage'daki string kopyalanır, `auto:1b` yapılır.
 4. 2 tick sonra command block temizlenir.
@@ -162,16 +162,16 @@ Butonu güncellemek için:
 
 ```
 # 1) Yeni function_file değerini storage'a yaz:
-/data modify storage click_api:temp ops.function_file set value "mynamespace:my_function"
+/data modify storage guimaker:temp ops.function_file set value "mynamespace:my_function"
 
 # 2) Güncelle:
-/function click_api:maker/gui/edit_page/btn_info/set_nbt
+/function guimaker:maker/gui/edit_page/btn_info/set_nbt
 ```
 
 `item_modifier` için de aynı pattern:
 ```
-/data modify storage click_api:temp ops.item_modifier set value "my_modifier"
-/function click_api:maker/gui/edit_page/btn_info/set_nbt
+/data modify storage guimaker:temp ops.item_modifier set value "my_modifier"
+/function guimaker:maker/gui/edit_page/btn_info/set_nbt
 ```
 
 ---
@@ -180,15 +180,15 @@ Butonu güncellemek için:
 
 **GUI silmek:**
 ```
-/data modify storage click_api:temp del.GUI_ID set value 1
-/function click_api:maker/gui/delete_gui/1
+/data modify storage guimaker:temp del.GUI_ID set value 1
+/function guimaker:maker/gui/delete_gui/1
 ```
 
 **Sayfa silmek:**
 ```
-/data modify storage click_api:temp del.GUI_ID set value 1
-/data modify storage click_api:temp del.page_number set value 1
-/function click_api:maker/gui/delete_page/1
+/data modify storage guimaker:temp del.GUI_ID set value 1
+/data modify storage guimaker:temp del.page_number set value 1
+/function guimaker:maker/gui/delete_page/1
 ```
 
 ---
@@ -196,10 +196,10 @@ Butonu güncellemek için:
 ### 6. Sayfa adını değiştir
 
 ```
-/data modify storage click_api:temp rename.GUI_ID set value 1
-/data modify storage click_api:temp rename.page_number set value 1
-/data modify storage click_api:temp rename.page_name set value '[{"text":"Yeni Ad","color":"gold"}]'
-/function click_api:maker/gui/change_name/1
+/data modify storage guimaker:temp rename.GUI_ID set value 1
+/data modify storage guimaker:temp rename.page_number set value 1
+/data modify storage guimaker:temp rename.page_name set value '[{"text":"Yeni Ad","color":"gold"}]'
+/function guimaker:maker/gui/change_name/1
 ```
 
 `page_name` tam JSON text component formatında olmalıdır (interpret:true ile görüntülenir).
@@ -214,7 +214,7 @@ Kendi datapack'inizden bir GUI sayfasını barrel olarak yerleştirmek için:
 
 ```mcfunction
 # GUI_ID=1, page_number=1 olan sayfayı yerleştir
-function click_api:worker/gui/block/place_0_0
+function guimaker:worker/gui/block/place_0_0
 ```
 
 `place_G_P` fonksiyonlarında `G` = `GUI` array index'i (0'dan başlar), `P` = `PAGES` array index'i. Hangi index'te hangi GUI/sayfa olduğunu bulmak için:
@@ -234,8 +234,8 @@ tellraw @a {"text":"Butona basıldı!","color":"green"}
 
 Storage'a kaydetmek için:
 ```
-/data modify storage click_api:temp ops.function_file set value "mynamespace:on_click"
-/function click_api:maker/gui/edit_page/btn_info/set_nbt
+/data modify storage guimaker:temp ops.function_file set value "mynamespace:on_click"
+/function guimaker:maker/gui/edit_page/btn_info/set_nbt
 ```
 
 ### GUI verilerini okuma
@@ -254,12 +254,12 @@ data get storage barden:gui.all GUI[{GUI_ID:1}].PAGES
 Datapack içinden dinamik arama için:
 ```mcfunction
 scoreboard players set $target_gui gm.Values 1
-function click_api:util/search/gui
+function guimaker:util/search/gui
 # Sonuç: $found_gui_idx gm.Values (−1 = bulunamadı)
 
 scoreboard players set $target_page gm.Values 1
-function click_api:util/ops/get_page_count
-function click_api:util/page_search/page
+function guimaker:util/ops/get_page_count
+function guimaker:util/page_search/page
 # Sonuç: $found_page_idx gm.Values (−1 = bulunamadı)
 ```
 
