@@ -17,7 +17,7 @@ execute as @e[type=marker,tag=gm.itemcheck,tag=gm.gui.block] at @s run function 
 execute as @a at @s run clear @s #guimaker:all{gm:{Button:1b}} 6400
 
 #> Düşen buton item'larını temizle
-kill @e[type=minecraft:item,nbt={Item:{tag:{gm:{button:1b}}}}]
+kill @e[type=minecraft:item,nbt={Item:{tag:{gm:{}}}}]
 
 execute as @a[scores={gm.Drop=1..}] run function guimaker:worker/click/check
 execute as @a[scores={gm.Drop=1..}] run scoreboard players reset @s gm.Drop
