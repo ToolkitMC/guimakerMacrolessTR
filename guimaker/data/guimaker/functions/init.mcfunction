@@ -2,6 +2,7 @@
 scoreboard objectives add gm.Values dummy
 scoreboard objectives add gm.Tests dummy
 scoreboard objectives add gm.Linking dummy
+scoreboard objectives add gm.Drop dummy
 
 #> Global GUI creation counter
 scoreboard players add $globalCreationID gm.Values 1
