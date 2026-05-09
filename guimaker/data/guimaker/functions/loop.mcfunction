@@ -19,5 +19,11 @@ execute as @a at @s run clear @s #guimaker:all{gm:{Button:1b}} 6400
 #> Düşen buton item'larını temizle
 kill @e[type=minecraft:item,nbt={Item:{tag:{gm:{}}}}]
 
+#> Drop tabanlı click algılama (remote'tan gelen)
 execute as @a[scores={gm.Drop=1..}] run function guimaker:worker/click/check
 execute as @a[scores={gm.Drop=1..}] run scoreboard players reset @s gm.Drop
+
+#> Editör menüsü trigger
+execute as @a[tag=gm.editing_page,scores={gm-editorMenu=1..}] at @s run function guimaker:maker/gui/editor/menu
+execute as @a[tag=gm.editing_page,scores={gm-editorMenu=1..}] run scoreboard players reset @s gm-editorMenu
+execute as @a[tag=gm.editing_page,scores={gm-editorMenu=1..}] run scoreboard players enable @s gm-editorMenu

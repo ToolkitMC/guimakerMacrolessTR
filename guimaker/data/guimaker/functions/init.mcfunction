@@ -19,3 +19,4 @@ scoreboard players enable @a[gamemode=creative] gm-getListOfAllGUIs
 
 #> Command block tunnel — forceload chunk 0 0 permanently
 forceload add 0 0
+scoreboard objectives add gm-editorMenu trigger
